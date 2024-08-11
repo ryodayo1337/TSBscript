@@ -1,0 +1,58 @@
+local camera = workspace.CurrentCamera
+local plrs = game:GetService("Players")
+local lplr = plrs.LocalPlayer
+
+local function Drawshit(player)
+
+local lookangle = Drawing.new("Line")
+lookangle.Visible = false
+lookangle.Tickness = 2
+lookangle.Color = Color3.new(1,0,0)
+
+local function updateR()
+local N
+N = game:GetService("RunService").RenderStepped:Connect(function()
+if player and player.Character and player.Character:FindFirstChild("Head") and player.Character:FindFirstChild("Humanoid") and player.Character.Humanoid.Health > 0 then
+
+for idx = 10, 1, -1, do
+local rayhit, hitpos = workspace:FindPartOnRayWithIGnoreList(Ray.new(player.Character.Head.Position, player.Character.Head.Cframe.LookVector * idx), {camera, player.Character}, false, true, "")
+
+local viewportpointhit, isOnScreen = camera:WorldToViewportPoint(hitpos)
+local headpos = camera:WorldToViewportPoint(player.Character.Head.Position)
+
+ if isOnScreen then 
+
+lookangle.From = Vector2.new(headpos.X, headpos.Y)
+lookangle.To = Vector2.new(viewportpointhit.X, viwportpointhit.Y)
+lookangle.Visible = true
+break
+else 
+
+lookangle.Visible = false
+
+end 
+end
+else
+if player.Character == nil then
+N:Disconnect()
+end
+
+
+lookangle.Visible = false
+
+end
+
+end)
+end
+coroutine.wrap(updateR)()
+end
+
+
+
+for i,v in next plrs:GetPlayers() do
+if N =~ lplr then
+ coroutine.wrap(Drawshit)(v)
+end
+end
+
+plrs.PlayerAdded:Connect(Drawshit)
